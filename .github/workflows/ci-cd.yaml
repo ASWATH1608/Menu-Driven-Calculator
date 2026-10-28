@@ -1,40 +1,48 @@
 name: CI/CD Pipeline
+
 on:
   push:
     branches:
       - main
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt || true
+
       - name: Run automated tests
         run: |
           python -m unittest test_app.py
+
       - name: Generate unique image tag
         id: meta
         run: |
           echo "TAG=v-${{ github.sha }}" >> $GITHUB_ENV
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.ASWATH1608 }}
-          password: ${{ secrets.dckr_pat_ai4O7VoQw9jzx4jzvw4FWA6V2DI }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ${{ secrets.ASWATH1608 }}/python-calculator:${{ env.TAG }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/python-calculator:${{ env.TAG }}
 
       - name: Set up Kubernetes context
         uses: azure/k8s-set-context@v4
@@ -44,6 +52,7 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          sed -i "s|<IMAGE_TAG>|${{ env.TAG }g" k8s-deployment.yaml
+          sed -i "s|<IMAGE_TAG>|${{ env.TAG }}|g" k8s-deployment.yaml
           kubectl apply -f k8s-deployment.yaml
           kubectl rollout restart deployment/python-calculator
+ 
