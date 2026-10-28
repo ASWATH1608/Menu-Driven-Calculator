@@ -15,7 +15,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: '3.12'
 
       - name: Install dependencies
         run: |
@@ -42,7 +42,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.aswath1606}}/python-calculator:${{ env.TAG }}
+          tags: ${{ secrets.aswath1606 }}/python-calculator:${{ env.TAG }}
 
       - name: Set up Kubernetes context
         uses: azure/k8s-set-context@v4
@@ -55,4 +55,3 @@ jobs:
           sed -i "s|<IMAGE_TAG>|${{ env.TAG }}|g" k8s-deployment.yaml
           kubectl apply -f k8s-deployment.yaml
           kubectl rollout restart deployment/python-calculator
- 
