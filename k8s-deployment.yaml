@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-calculator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: python-calculator
+  template:
+    metadata:
+      labels:
+        app: python-calculator
+    spec:
+      containers:
+      - name: calculator
+        image: <YOUR_DOCKERHUB_USERNAME>/python-calculator:<IMAGE_TAG>
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: python-calculator-service
+spec:
+  type: NodePort
+  selector:
+    app: python-calculator
+  ports:
+  - port: 80
+    targetPort: 8000
