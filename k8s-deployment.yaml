@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: calculator
-        image: <YOUR_DOCKERHUB_USERNAME>/python-calculator:<IMAGE_TAG>
+        image: <aswath1606>/python-calculator:<IMAGE_TAG>
         imagePullPolicy: Always
 ---
 apiVersion: v1
